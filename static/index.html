@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>BPMN Viewer</title>
+  <script src="https://unpkg.com/bpmn-js@18.3.1/dist/bpmn-viewer.development.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #canvas {
+      height: 80vh;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>BPMN Diagram Viewer</h1>
+  <div id="canvas"></div>
+
+  <script>
+    const viewer = new BpmnJS({
+      container: '#canvas'
+    });
+
+    fetch('/diagram')
+      .then(response => response.text())
+      .then(xml => viewer.importXML(xml))
+      .catch(error => console.error('Ошибка загрузки диаграммы:', error));
+  </script>
+</body>
+</html>
