@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BPMN Viewer</title>
   <script src="https://unpkg.com/bpmn-js@18.3.1/dist/bpmn-viewer.development.js"></script>
   <style>
@@ -14,21 +15,40 @@
       height: 80vh;
       border: 1px solid #ccc;
     }
+
+    #error-message {
+      display: none;
+      margin-top: 12px;
+      color: #b00020;
+    }
   </style>
 </head>
 <body>
   <h1>BPMN Diagram Viewer</h1>
   <div id="canvas"></div>
+  <p id="error-message" role="alert"></p>
 
   <script>
     const viewer = new BpmnJS({
       container: '#canvas'
     });
 
+    const errorMessage = document.getElementById('error-message');
+
     fetch('/diagram')
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.text();
+      })
       .then(xml => viewer.importXML(xml))
-      .catch(error => console.error('Ошибка загрузки диаграммы:', error));
+      .catch(error => {
+        errorMessage.textContent = 'Не удалось загрузить диаграмму.';
+        errorMessage.style.display = 'block';
+        console.error('Ошибка загрузки диаграммы:', error);
+      });
   </script>
 </body>
 </html>
